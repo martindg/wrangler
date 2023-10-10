@@ -1,0 +1,25 @@
+name: Build
+
+on:
+  push:
+    branches: [ 'master' ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Registry Login
+      run: echo "${{secrets.GITHUB_TOKEN}}" | docker login -u ${{ github.actor }} --password-stdin ghcr.io
+
+    - name: Build base image
+      run: make -e build_wranagler
+
+    - name: Push Images
+      run: make -e push_wrangler
+
+
